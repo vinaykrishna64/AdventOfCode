@@ -35,6 +35,8 @@ end
 Dn{1,1} = "/";
 Ds(1,1) = sum(f_size,"all");
 fill_sv = [];
+f_for_plot = zeros(size(f_size));
+f_for_plot(:,1) = Ds(1,1);
 for i = 2:sys_size
     dirs = dirname(:,i);
     [dirs_fill,str_sv,N]= fill_mis_strs(dirs);
@@ -42,6 +44,7 @@ for i = 2:sys_size
     for j = 2:numel(unq_fiil)
         Dn{j,i} = str_sv(j);
         Ds(j,i) = sum(f_size(dirs_fill == unq_fiil(j),i:end),'all');
+        f_for_plot(dirs_fill == unq_fiil(j),i) = Ds(j,i);
     end
     fill_sv = [fill_sv, dirs_fill];
 end
@@ -55,6 +58,14 @@ target = space_required - free_space;
 Deletables = find((Ds - target) >= 0);
 [part2_size,I_min] = min(Ds(Deletables))
 part2_name = Dn{Deletables(I_min)}
+
+%% fun plot to visualize the disk
+figure
+imagesc(f_for_plot(:,sum(f_for_plot,1)>0)/10^6)
+colormap(turbo)
+colorbar
+title('disk structure in Mb')
+exportgraphics(gcf,'disk_structure_map.jpeg','Resolution',1200)
 %% function fill missing with previous 
 % this might be possible with findgroups and fillmissing functions
 
