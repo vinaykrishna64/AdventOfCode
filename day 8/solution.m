@@ -1,5 +1,6 @@
 clear all
 clc
+tic
 S = str2double(num2cell(readlines("input.txt").char()));
 
 %%
@@ -24,7 +25,15 @@ visbility_score = arrayfun(@(x,y) score_make(S(x,1:(y-1)), S(x,y),y,"r") *...
 
 part_2 = max(visbility_score)
 
-
+%plots
+figure
+imshow(1-reshape(visbility,size(S,1)-2,size(S,2)-2))
+title('visibility')
+exportgraphics(gcf,'visibility_map.jpeg','Resolution',1200)
+figure
+imshow( reshape(visbility_score,size(S,1)-2,size(S,2)-2)/part_2)
+title('visibility score')
+exportgraphics(gcf,'visibility_score_map.jpeg','Resolution',1200)
 %%
 function [out] = score_make(S,s,xy,cmd)
     I = find(S >= s);
