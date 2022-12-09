@@ -1,100 +1,60 @@
-%% part 1
 clear all
 clc
-S = readlines("input.txt");
+
+S = readlines("input.txt").replace(["U","D","L","R"],string(1:4)).split(" ").double();
+S = repelem(S(:,1),S(:,2),1);
+directions = [0 1; 0 -1; -1 0;1 0];
+head_move = cumsum([[1 1];directions(S,:)]); % head trajectory
 
 
-head_visit = simulation(2,S);
+%% part 1
+tail_visit = simulation(2,head_move);
+min_val = - min(tail_visit,[],"all") + 1; %make vectors positive for indexing
+
+part_1 = numel(unique( sub2ind(1000*[1 1],tail_visit(end,1:2:end)+min_val,tail_visit(end,2:2:end)+min_val)))
 
 figure
 subplot(2,1,1)
-plot(head_visit(1,1:2:end),head_visit(1,2:2:end),'b*')
+plot(head_move(:,1),head_move(:,2),'b*')
 hold on
-plot(head_visit(2,1:2:end),head_visit(2,2:2:end),'r*')
+plot(tail_visit(end,1:2:end),tail_visit(end,2:2:end),'r*')
 grid on
-sz = max(head_visit,[],'all');
-visits = zeros(sz);
-visits( sub2ind(sz*[1 1],head_visit(2,1:2:end),head_visit(2,2:2:end))) = 1;
 legend({'head','tail'})
 title('tail & head path part 1')
-part_1 = sum(visits,'all')
+
 
 %% part 2
+tail_visit = simulation(10,head_move);
+min_val = - min(tail_visit,[],"all") + 1; %make vectors positive for indexing
 
+part_2 = numel(unique( sub2ind(1000*[1 1],tail_visit(end,1:2:end)+min_val,tail_visit(end,2:2:end)+min_val)))
 
-S = readlines("input.txt");
-
-
-head_visit = simulation(10,S);
-
-
-
-sz = max(head_visit,[],'all');
-visits = zeros(sz);
-visits( sub2ind(sz*[1 1],head_visit(10,1:2:end),head_visit(10,2:2:end))) = 1;
 subplot(2,1,2)
-plot(head_visit(1,1:2:end),head_visit(1,2:2:end),'b*')
+plot(head_move(:,1),head_move(:,2),'b*')
 hold on
-plot(head_visit(end,1:2:end),head_visit(end,2:2:end),'r*')
+plot(tail_visit(end,1:2:end),tail_visit(end,2:2:end),'r*')
 grid on
 legend({'head','tail'})
 title('tail & head path part 2')
-part_2 = sum(visits,'all')
 exportgraphics(gcf,'path_plot.jpeg','Resolution',1200)
 %% functions
-function [head_visit] = simulation(n_heads,S)
-    head_visit = [];
-    
-    head = 300* ones(n_heads,2);
-    
-    head_visit = [head_visit head];
-    
-    
-    for i = 1:numel(S)
-        cmd = S(i).split(" ");
-        if cmd{1} == "R" | cmd{1} == "L"
-            x = str2double(cmd{2});
-            k = 1;
-            if cmd{1} == "L"
-                k = -1;
-            end
-            for j = 1:x
-                % move head
-                head(1,1) = head(1,1) + k;
-                % move tails
-                for T = 2:n_heads
-                    head(T,:) = move_tail(head(T-1,:),head(T,:));
-                end
-                head_visit = [head_visit head];
-            end
-        else
-            y = str2double(cmd{2});
-            k = 1;
-            if cmd{1} == "D"
-                k = -1;
-            end
-            for j = 1:y
-                % move head
-                head(1,2) = head(1,2) + k;
-                % move tails
-                for T = 2:n_heads
-                    head(T,:) = move_tail(head(T-1,:),head(T,:));
-                end
-                head_visit = [head_visit head];
-            end
+function [tail_visit] = simulation(n_heads,head_move)
+    tail_visit = [];
+    tails = ones(n_heads-1,2);
+    tail_visit = [tail_visit tails];
+    for j = 1:size(head_move,1)
+        head = head_move(j,:);
+        for i = 1:n_heads-1
+            tails(i,:) = move_tail(head,tails(i,:));
+            head = tails(i,:);
         end
+        tail_visit = [tail_visit tails];
     end
 end
 function [tail] = move_tail(head,tail)
     xy =  head - tail;
-    if ~(abs(xy(1))<= 1 & abs(xy(2))<= 1) %if not move
-        if abs(xy(2))== 2 & abs(xy(1)) == 0
-            tail(2) = tail(2) + sign(xy(2));
-        elseif  abs(xy(1))== 2 & abs(xy(2)) == 0
-            tail(1) = tail(1) + sign(xy(1));
-        else
-            tail = tail + sign(xy);
-        end
+    if ~(all(abs(xy)<= 1)) %if not move
+        tail = tail + sign(xy);
     end
 end
 
