@@ -33,9 +33,12 @@ sz = max(head_visit,[],'all');
 visits = zeros(sz);
 visits( sub2ind(sz*[1 1],head_visit(10,1:2:end),head_visit(10,2:2:end))) = 1;
 subplot(2,1,2)
-plot(head_visit(2,1:2:end),head_visit(2,2:2:end),'r*')
+plot(head_visit(1,1:2:end),head_visit(1,2:2:end),'b*')
+hold on
+plot(head_visit(end,1:2:end),head_visit(end,2:2:end),'r*')
 grid on
-title('tail path part 2')
+legend({'head','tail'})
+title('tail & head path part 2')
 part_2 = sum(visits,'all')
 exportgraphics(gcf,'path_plot.jpeg','Resolution',1200)
 %% functions
