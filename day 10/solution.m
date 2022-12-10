@@ -19,9 +19,7 @@ locs = 20 + [0, 40*(1:end_L)]';
 part_1 = sum(signal(locs).*locs)
 
 %% part 2
-
 screen = zeros(6,40);
-
 for i = 1:numel(signal)
     row = floor(i/40);
     col = i - row*40;
@@ -35,6 +33,16 @@ imshow(imresize(1 - screen,10))
 title('part 2 - CRT display')
 exportgraphics(gcf,'CRT.jpeg','Resolution',1200)
 
+
+%% Linear index idea to make it loopless
+
+signal2 =  reshape(signal(1:end-1)+1, [40,6])';
+IDX = repmat([1:40],6,1);
+screen2 = abs(IDX - signal2) <= 1; %make drawing
+screen2(end,end) = abs(40 - signal(end)) <= 1; %account for first operation
+figure
+imshow(imresize(1 - screen2,10))
+title('part 2 - CRT display-loopless')
 
 
 
