@@ -39,7 +39,7 @@ exportgraphics(gcf,'CRT.jpeg','Resolution',1200)
 signal2 =  reshape(signal(1:end-1)+1, [40,6])';
 IDX = repmat([1:40],6,1);
 screen2 = abs(IDX - signal2) <= 1; %make drawing
-screen2(end,end) = abs(40 - signal(end)) <= 1; %account for first operation
+screen2(end,end) = abs(40 - signal(end)) <= 1; %account for last operation
 figure
 imshow(imresize(1 - screen2,10))
 title('part 2 - CRT display-loopless')
