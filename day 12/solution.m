@@ -39,8 +39,35 @@ Part_1 = numel(path_1)-1
 
 %% part 2
 I =  find(S == 2);
-path_2 = Part_1;
+path_2_size = Part_1;
+path2 = {path_1};
 for i = 1:numel(I)
-    path_2(i+1) = numel(shortestpath(D,I(i),I_e))-1;
+    path2{i+1} = shortestpath(D,I(i),I_e);
+    path_2_size(i+1) = numel(path2{i+1})-1;
 end
-part_2 = min(path_2(path_2 > 0))
+J = find(path_2_size > 0);
+[part_2 j] = min(path_2_size(path_2_size > 0));
+part_2
+
+%% path figure
+figure('WindowState','maximized')
+subplot(1,2,1)
+contour(S(2:end-1,2:end-1),28)
+[row,col]=  ind2sub(sz , path_1);
+plot(col-1,row-1,'r-*')
+hold on
+[row,col]=  ind2sub(sz , path2{J(j)});
+plot(col-1,row-1,'g-*')
+heights = S(2:end-1,2:end-1);
+heights(heights == 1) = 2;
+heights(heights == 28) = 27;
+heights = heights - 1;
+contour(heights,28)
+colorbar()
+legend({'path 1','path 2','map'})
+title('paths found')
+subplot(1,2,2)
+surf(heights)
+view(-30,30)
+title('3D representation of heights')
+exportgraphics(gcf,'path-map.jpeg','Resolution',1200)
