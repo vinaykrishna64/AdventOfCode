@@ -18,13 +18,15 @@ I = find(keys == "AA");
 paths = {[I]};
 for j = 1:30 %mins
     paths =  newpaths(paths,vals,30,Conn);
-    if  mod(j,5) == 0 %lose 3/4th data at every 5 steps/mins
-         P = 0;
-         for i = 1:numel(paths)
-             P(i) = pressure_sum(paths{i},vals);
-         end
-         [m,J] = maxk(P,floor(numel(paths)/4));
-         paths = paths(J);
+    if j > 4
+        if  mod(j,2) == 1 %lose 3/4th data at every 5 steps/mins
+             P = 0;
+             for i = 1:numel(paths)
+                 P(i) = pressure_sum(paths{i},vals);
+             end
+             [m,J] = maxk(P,floor(numel(paths)/4));
+             paths = paths(J);
+        end
     end
     % length check for break
     if all(cellfun(@numel,paths) > 29)
