@@ -67,13 +67,13 @@ for i = 1:numel(Path1)
     title(["part 1 path" num2str(i) "mins"])
 
     hold on
-    L1 = plot([NaN NaN], [NaN NaN], 'g')
+    L1 = plot([NaN NaN], [NaN NaN], 'g');
 
     highlight(Plt1,Path1(1:i),'NodeColor','g','EdgeColor','g','LineWidth',1.5);
 
     legend([Plt1,L1],{"Pipes","path"})
     
-    frame = getframe(gcf)
+    frame = getframe(gcf);
     for i = 1:10
         writeVideo(v,frame);
     end
@@ -117,18 +117,18 @@ open(v)
 figure('WindowState','maximized')
 for i = 1:numel(Path21)
     Plt2 = plot(D,'Layout','layered');
-    title(["part 1 path" num2str(i) "mins"])
+    title(["part 2 path" num2str(i) "mins"])
     hold on
 
-    L1 = plot([NaN NaN], [NaN NaN], 'g')
-    L2 = plot([NaN NaN], [NaN NaN], 'b')
+    L1 = plot([NaN NaN], [NaN NaN], 'g');
+    L2 = plot([NaN NaN], [NaN NaN], 'b');
 
     highlight(Plt2,Path21(1:i),'NodeColor','g','EdgeColor','g','LineWidth',1.5);
     highlight(Plt2,Path22(1:i),'NodeColor','b','EdgeColor','b','LineWidth',1.5);
 
     legend([Plt2,L1,L2],{"Pipes","path man","path elephant"})
 
-    frame = getframe(gcf)
+    frame = getframe(gcf);
     for i = 1:10
         writeVideo(v,frame);
     end
