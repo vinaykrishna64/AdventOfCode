@@ -43,8 +43,45 @@ c = 1;
      end
  end
 [part_1 ,J1] = max(P);
-paths{J1}
+path1 = paths{J1};
 part_1
+
+%% plots - 1
+M2 = containers.Map(1:numel(keys),keys);
+Path1 = string(arrayfun(@(x) M2(x),path1,'UniformOutput',false));
+
+nodeEdge = [];
+for i = 1:numel(keys)
+    for j = 1:numel(conns{i})
+        nodeEdge = [nodeEdge; [keys(i) conns{i}(j)]];
+    end
+end
+             
+D = digraph(nodeEdge(:,1),nodeEdge(:,2));
+v = VideoWriter("part1.mp4",'MPEG-4');
+vidObj.FrameRate = 1;
+open(v)
+figure('WindowState','maximized')
+for i = 1:numel(Path1)
+    Plt1 = plot(D,'Layout','layered');
+    title(["part 1 path" num2str(i) "mins"])
+
+    hold on
+    L1 = plot([NaN NaN], [NaN NaN], 'g')
+
+    highlight(Plt1,Path1(1:i),'NodeColor','g','EdgeColor','g','LineWidth',1.5);
+
+    legend([Plt1,L1],{"Pipes","path"})
+    
+    frame = getframe(gcf)
+    for i = 1:10
+        writeVideo(v,frame);
+    end
+    clf
+end
+close(v)
+close all
+
 %% part 2
 paths = {[I;I]};
 openables = find(vals > 0);
@@ -66,8 +103,42 @@ for i = 1:numel(paths)
    P2(i) = pressure_sum2(paths{i},vals,26);
 end
 [part_2 ,J2] = max(P2);
-paths{J2}
+path2 = paths{J2};
 part_2
+
+%% plots - 2
+
+Path21 = string(arrayfun(@(x) M2(x),path2(1,:),'UniformOutput',false));
+Path22 = string(arrayfun(@(x) M2(x),path2(2,:),'UniformOutput',false));
+
+v = VideoWriter("part2.mp4",'MPEG-4');
+vidObj.FrameRate = 1;
+open(v)
+figure('WindowState','maximized')
+for i = 1:numel(Path21)
+    Plt2 = plot(D,'Layout','layered');
+    title(["part 1 path" num2str(i) "mins"])
+    hold on
+
+    L1 = plot([NaN NaN], [NaN NaN], 'g')
+    L2 = plot([NaN NaN], [NaN NaN], 'b')
+
+    highlight(Plt2,Path21(1:i),'NodeColor','g','EdgeColor','g','LineWidth',1.5);
+    highlight(Plt2,Path22(1:i),'NodeColor','b','EdgeColor','b','LineWidth',1.5);
+
+    legend([Plt2,L1,L2],{"Pipes","path man","path elephant"})
+
+    frame = getframe(gcf)
+    for i = 1:10
+        writeVideo(v,frame);
+    end
+    clf
+end
+close(v)
+close all
+
+
+
 %% functions
 
 function [new_paths] = newpaths(paths,vals,max_L,Conn) 
