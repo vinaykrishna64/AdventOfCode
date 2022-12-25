@@ -56,7 +56,7 @@ for Bp = 1:numel(S)
            paths = paths(score);
            clear score
        end     
-       if mins >= 18 % remove low performing geo paths at 22min 
+       if mins >= 18 % remove low performing geo paths at 18min 
            % seems perfect based on hand calcs based on ranges of costs
            score = 0;
            for k = 1:numel(paths)
