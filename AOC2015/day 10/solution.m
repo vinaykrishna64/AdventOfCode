@@ -3,16 +3,20 @@ clc
 
 S = str2vec(readlines("input.txt"));
 S1 = S;
-for i = 1:40
-    S1 = convert(S1);
-end
-part_1 = numel(S1)
-
-S2 = S;
 for i = 1:50
-    S2 = convert(S2);
+    S1 = convert(S1);
+    N(i) = numel(S1);
 end
-part_2 = numel(S2)
+part_1 = N(40)
+part_2 = N(50)
+
+Nd = gradient(N);
+figure("WindowState","maximized")
+plot(1:49, Nd(1:end-1)./N(1:end-1),'b-o')
+title("finding equillibrium")
+legend({"$\frac{N_{i} - N_{i-1}}{N_{i-1}}$"},'interpreter','latex','fontsize',16)
+exportgraphics(gcf,'finding_equillibrium.jpeg','Resolution',1200)
+
 
 function [S2] = convert(S)
     S2 = [];
