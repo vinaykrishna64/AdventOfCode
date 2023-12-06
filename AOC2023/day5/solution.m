@@ -20,7 +20,6 @@ for idx = 1:numel(seeds)
     end
 end
 fprintf('part 1 = %10d\n',minloc)
-
 %% part 2
 current_ranges = [seeds(1:2:end) (seeds(1:2:end)+seeds(2:2:end)-1)]; %seed intervals
 current_ranges = sort(current_ranges(:))'; % convert to row
@@ -29,9 +28,7 @@ for idx = 1:numel(breaks)-1 % cycle layers
    map_set       = map_cell{idx};
    set_intervals = [map_set(:,2), map_set(:,2)+map_set(:,3)]; % make intervals
    set_intervals = sort(set_intervals(:))'; % convert to row
-   for jdx = 1:numel(set_intervals) 
-       current_ranges = insert_limit(current_ranges,set_intervals(jdx),jdx);
-   end
+   current_ranges = insert_limit(current_ranges,set_intervals);
    %% map layer tranformation
    for jdx = 1:numel(current_ranges)
        current_ranges(jdx) = Convert_layer(current_ranges(jdx),map_set);
@@ -40,24 +37,25 @@ for idx = 1:numel(breaks)-1 % cycle layers
 end
 fprintf('part 2 = %10d\n',min(current_ranges(:,1)))
 
-
 %% functions
 
-function [ranges] = insert_limit(ranges,lim,lim_idx)
-    if mod(lim_idx,2) == 1 % left limit
-        flg = 1;
-    else   % right limit
-        flg = 2;
-    end
-    while flg <= numel(ranges)-1
-        if ((mod(lim_idx,2) ~= mod(flg,2)) & (mod(lim_idx,2) == 0) )& ranges(flg) < lim & ranges(flg+1) > lim % inserting left limit
-           ranges = [ranges(1:flg) lim lim+1 ranges(flg+1:end)];
-           flg = flg + 3;
-        elseif ((mod(lim_idx,2) ~= mod(flg,2)) & (mod(lim_idx,2) ==1) )& ranges(flg) > lim & ranges(flg-1) < lim % inserting right limit
-           ranges = [ranges(1:flg-1) lim lim+1 ranges(flg:end)];
-           flg = flg + 3;
-        else
-            flg = flg + 1;
+function [ranges] = insert_limit(ranges,lims)
+    for lim_idx = 1:numel(lims)
+        if mod(lim_idx,2) == 1 % left limit
+            flg = 1;
+        else   % right limit
+            flg = 2;
+        end
+        while flg <= numel(ranges)-1
+            if (mod(lim_idx,2) == 1)& (ranges(flg) < lims(lim_idx) & ranges(flg+1) > lims(lim_idx)) % inserting left limit
+               ranges = [ranges(1:flg) lims(lim_idx) lims(lim_idx)+1 ranges(flg+1:end)];
+               flg = flg + 3;
+            elseif (mod(lim_idx,2) ==0)& (ranges(flg) > lims(lim_idx) & ranges(flg-1) < lims(lim_idx)) % inserting right limit
+               ranges = [ranges(1:flg-1) lims(lim_idx) lims(lim_idx)+1 ranges(flg:end)];
+               flg = flg + 3;
+            else
+                flg = flg + 2;
+            end
         end
     end
 end
